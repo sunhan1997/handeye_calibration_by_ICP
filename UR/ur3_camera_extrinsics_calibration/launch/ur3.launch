@@ -1,0 +1,43 @@
+<launch>
+    <!-- you can write your own calibrate.launch, by including the ROS drivers for robot and tracking and choosing
+    your own namespace if you have multiple tracking devices or robots -->
+    <arg name="namespace_prefix" default="ur3_realsense_handeyecalibration" />
+
+    <arg name="robot_ip" doc="The IP address of the UR5 robot" />
+
+    <arg name="marker_size" doc="Size of the ArUco marker used, in meters" default="0.14"/>
+    <arg name="marker_id" doc="The ID of the ArUco marker used" default="571"/>
+
+    <!-- 1. start the Realsense
+    <include file="$(find realsense2_camera)/launch/rs_aligned_depth.launch" >
+        <arg name="filters" value="pointcloud" />
+    </include>-->
+
+
+    <!-- 2. start the robot-->
+    <include file="$(find ur_modern_driver)/launch/ur5_bringup.launch">
+        <arg name="robot_ip" value="192.168.1.50" />
+    </include>
+    <include file="$(find ur5_e_moveit_config)/launch/ur5_e_moveit_planning_execution.launch">
+        <arg name="limited" value="true" />
+    </include>
+    <include file="$(find ur5_e_moveit_config)/launch/moveit_rviz.launch">
+        <arg name="config" value="true" />
+    </include>
+
+
+    <!--  start the robotiq_2f_gripper_140_driver
+    <node pkg="robotiq_2f_gripper_control" name="gripper_driver" type="Robotiq2FGripperRtuNode.py">
+    </node>-->
+
+   <!--<node pkg="tf" type="static_transform_publisher" name="tool0_camera_color_optical_frame1"
+   args="0.075 0.062 -0.022  0.031 0.081 0.950 0.299 /tool0 /camera_color_optical_frame1 50" />
+
+    <node pkg="tf" type="static_transform_publisher" name="camera_color_optical_frame1_camera_link"
+    args="0.026 0.001 0.004 0.498 -0.501 0.500 0.501 /camera_color_optical_frame1 /camera_link 50" />-->
+
+
+
+</launch>
+
+

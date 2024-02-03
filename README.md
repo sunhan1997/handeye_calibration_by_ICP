@@ -65,3 +65,61 @@ rosrun tf tf_echo /panda_link8 /camera_link
 rosrun tf tf_echo /panda_K /camera_link
  ```
 
+
+# UR:
+
+## Step 
+
+- gazebo中加入四个相机
+ ```
+ 将/ur_ws/src/universal_robot-melodic-devel/ur_gazebo/launch/ur5.launch中的
+<arg name="world_name" default="worlds/empty.world"/>
+更改为
+<arg name="world_name" default="/home/sunh/catkin_ws/src/franka_ros/franka_gazebo/world/camera_only.world"/>
+ ```
+
+- 为了使得ur机器人能够在gazebo中得到一个和真实场景一样的姿态，先打开gazebo，然后rostopic list，查看发布的msg，发现
+ ```
+/arm_controller/follow_joint_trajectory/goal
+然后运行
+rostopic type /arm_controller/follow_joint_trajectory/goal
+得到control_msgs/FollowJointTrajectoryActionGoal
+在/UR/calibration_code/control_ur.py中改变仿真环境中的机器人位姿
+ ```
+
+- 打开机器人代码控制
+ ```
+roslaunch ur3_camera_extrinsics_calibration ur3.launch
+ ```
+
+- 机器人真实姿态，然后读取机器人当前关节角度. 运行rostopic echo /joint_states，读取六个关节角度并放置到control_ur.py里面
+
+<img src="image/ur_real.png" width="400" height="240"/><br/>
+
+- 然后roslaunch ur_gazebo ur5_calibration.launch启动ur_gazebo,运行control_ur.py，得到机器人gazebo位姿和真实机器人一样
+
+<img src="image/ur_gazebo.png" width="400" height="240"/><br/>
+
+- gazebo中的机器人不在地面上，他的位置距离地面大概0.1m，因此将读取的中0.735，变为0.835，能够完成ICP，但是这里还是存在一个误差（Z轴方向上）
+ ```
+rosrun tf tf_echo /world /camera_link
+- Translation: [0.734, -0.061, 0.735]
+- Rotation: in Quaternion [0.753, 0.648, 0.001, -0.111]
+in RPY (radian) [-2.974, -0.146, 1.409]
+in RPY (degree) [-170.374, -8.384, 80.754]
+ ```
+
+<img src="image/ICP.png" width="400" height="240"/><br/>
+ ```
+ICP之后的结果如下
+rosrun tf static_transform_publisher 0.6524750249374777 -0.05664500663265338 0.8384623476879968 0.7173094306142436 0.6932075356119015 0.04327444014698071 -0.05529752392927979 /world /camera_link 50
+ ```
+
+- 因此为了消除那个误差，相机在world下的坐标为（Z轴减去0.1）
+
+ ```
+rosrun tf static_transform_publisher 0.6524750249374777 -0.05664500663265338 0.7384623476879968 0.7173094306142436 0.6932075356119015 0.04327444014698071 -0.05529752392927979 /world /camera_link 50
+ ``` 
+
+<img src="image/result.png" width="400" height="300"/><br/>
+
