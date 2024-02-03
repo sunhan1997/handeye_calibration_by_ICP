@@ -18,9 +18,9 @@ addressing both "eye-in-hand" and "eye-to-hand".
 - 然后运行下面代码可以获得四个相机的点云，注意1234是分开进行的。将四个点云分别命名为1.pcd,2.pcd,3.pcd,4.pcd
 
 
-  ```shell
+```shell
 rosrun pcl_ros pointcloud_to_pcd /input:=/camera/depth/points1/2/3/4
-  ```
+```
 
 - 然后运行下面代码，根据相机坐标将点云合在一起,获得整体点云，记得在meshlab中去掉地面
 
