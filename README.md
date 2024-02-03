@@ -2,6 +2,7 @@
 This code implements hand-eye calibration using ICP and a depth camera, 
 addressing both "eye-in-hand" and "eye-to-hand".
 
+- This method is from [pyni](https://github.com/pyni)
 
 
 # Franka:
@@ -122,4 +123,6 @@ rosrun tf static_transform_publisher 0.6524750249374777 -0.05664500663265338 0.7
  ``` 
 
 <img src="image/result.png" width="400" height="300"/><br/>
+
+
 
